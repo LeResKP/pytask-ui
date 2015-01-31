@@ -1,5 +1,5 @@
 <div class="list-group">
-  <div class="list-group-item" ng-class="{active: isActive(task)}" ng-repeat="task in tasks">
+  <div class="list-group-item" ng-class="{'list-group-item-info': isActive(task)}" ng-repeat="task in tasks">
     <b>Description</b>: {{task.description}}
     <hr />
     <div class="row">
@@ -16,5 +16,6 @@
         <b>Completed date</b>:<br /> {{task.completed_date || '-' | date : 'medium'}}
       </div>
     </div>
+    <button ng-click="setActive(task)" ng-disabled="isActive(task)" class="btn btn-default">Active this task</button>
   </div>
 </div>

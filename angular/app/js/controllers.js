@@ -1,5 +1,8 @@
 'use strict';
 
+
+var ACTIVE_STATUS = 'ACTIVE';
+
 /**
  * @ngdoc function
  * @name App.controller:MainCtrl
@@ -12,7 +15,19 @@ pytaskControllers
   .controller('MainCtrl', ['$scope', 'Task', function ($scope, Task) {
     $scope.tasks = Task.query();
     $scope.isActive = function(task) {
-        return task.status === 'ACTIVE';
+        return task.status === ACTIVE_STATUS;
+    };
+    $scope.setActive = function(task) {
+        task.$update({action: 'active'}, function(){
+            // Remove the active task
+            for(var i=0, len=$scope.tasks.length; i < len; i++) {
+                var t = $scope.tasks[i];
+                if (t.idtask !== task.idtask && t.status === ACTIVE_STATUS) {
+                    t.status = '';
+                    break;
+                }
+            }
+        });
     };
 }]);
 
