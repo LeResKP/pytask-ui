@@ -26,9 +26,9 @@ angular
         templateUrl: 'views/main.html',
         controller: 'MainCtrl'
       })
-      .when('/about', {
-        templateUrl: 'views/about.html',
-        controller: 'AboutCtrl'
+      .when('/tasks/:idtask', {
+        templateUrl: 'views/task.html',
+        controller: 'taskCtrl'
       })
       .otherwise({
         redirectTo: '/'

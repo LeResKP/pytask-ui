@@ -1,7 +1,12 @@
 from pyramid.view import view_config
 import pyramid.httpexceptions as exc
 from sqlalchemy.orm import class_mapper
+from sqlalchemy.exc import IntegrityError
+import transaction
 from pytask.models import DBSession, Task
+
+
+EDITABLE_TASK_FIELDS = ['description']
 
 
 def sqla_obj_to_dict(obj):
@@ -18,11 +23,52 @@ def sqla_obj_to_dict(obj):
 
 
 @view_config(route_name='tasks', renderer='json')
+@view_config(route_name='task', renderer='json', request_method='GET')
 def tasks(request):
     """Returns all the tasks as dict
     """
+    idtask = request.matchdict.get('idtask')
+    if idtask:
+        task = Task.query.get(idtask)
+        if not task:
+            raise exc.HTTPNotFound('task doesn\'t exist: %i' % idtask)
+        return sqla_obj_to_dict(task)
     tasks = Task.query.all()
-    return [sqla_obj_to_dict(task) for task in tasks]
+    return [sqla_obj_to_dict(t) for t in tasks]
+
+
+@view_config(route_name='task', renderer='json', request_method='POST')
+def update(request):
+    """Returns all the tasks as dict
+    """
+    idtask = request.matchdict.get('idtask')
+    task = Task.query.get(idtask)
+    if not task:
+        raise exc.HTTPNotFound('task doesn\'t exist: %i' % idtask)
+    with transaction.manager:
+        for field in EDITABLE_TASK_FIELDS:
+            if field in request.json_body:
+                setattr(task, field, request.json_body[field])
+        DBSession.add(task)
+    DBSession.add(task)
+    return sqla_obj_to_dict(task)
+
+
+@view_config(route_name='task_new', renderer='json', request_method='POST')
+def new(request):
+    """Returns all the tasks as dict
+    """
+    task = Task()
+    try:
+        with transaction.manager:
+            for field in EDITABLE_TASK_FIELDS:
+                if field in request.json_body:
+                    setattr(task, field, request.json_body[field])
+            DBSession.add(task)
+    except IntegrityError:
+        raise exc.HTTPBadRequest('Some post data are missing')
+    DBSession.add(task)
+    return sqla_obj_to_dict(task)
 
 
 @view_config(route_name='tasks_action', renderer='json')

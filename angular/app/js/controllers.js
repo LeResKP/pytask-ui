@@ -18,7 +18,7 @@ pytaskControllers
         return task.status === ACTIVE_STATUS;
     };
     $scope.setActive = function(task) {
-        task.$update({action: 'active'}, function(){
+        task.$save({action: 'active'}, function(){
             // Remove the active task
             for(var i=0, len=$scope.tasks.length; i < len; i++) {
                 var t = $scope.tasks[i];
@@ -34,16 +34,28 @@ pytaskControllers
 
 /**
  * @ngdoc function
- * @name App.controller:AboutCtrl
+ * @name App.controller:taskCtrl
  * @description
- * # AboutCtrl
+ * # taskCtrl
  * Controller of the App
  */
 pytaskControllers
-  .controller('AboutCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+  .controller('taskCtrl', ['$scope', '$routeParams', 'Task', function ($scope, $routeParams, Task) {
+    var isNew = ($routeParams.idtask === 'new');
+    if (!isNew) {
+        $scope.task = Task.get({idtask: $routeParams.idtask});
+    }
+    else {
+        $scope.task = new Task();
+    }
+    $scope.updateTask = function(task) {
+        if ($scope.task_form.$valid) {
+            if (task.idtask) {
+                task.$save();
+            }
+            else {
+                task.$save({action: 'new'});
+            }
+        }
+    };
+}]);

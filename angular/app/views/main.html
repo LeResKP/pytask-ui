@@ -1,3 +1,4 @@
+<a href="#/tasks/new" class="btn btn-default">Add task</a><br /><br />
 <div class="list-group">
   <div class="list-group-item" ng-class="{'list-group-item-info': isActive(task)}" ng-repeat="task in tasks">
     <b>Description</b>: {{task.description}}
@@ -17,5 +18,6 @@
       </div>
     </div>
     <button ng-click="setActive(task)" ng-disabled="isActive(task)" class="btn btn-default">Active this task</button>
+    <a href="#/tasks/{{task.idtask}}" class="btn btn-default">Edit</a>
   </div>
 </div>
