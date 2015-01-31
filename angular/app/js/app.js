@@ -9,14 +9,16 @@
  * Main module of the application.
  */
 angular
-  .module('App', [
+  .module('pytaskApp', [
     'ngAnimate',
     'ngCookies',
     'ngMessages',
     'ngResource',
     'ngRoute',
     'ngSanitize',
-    'ngTouch'
+    'ngTouch',
+    'pytaskControllers',
+    'pytaskServices'
   ])
   .config(function ($routeProvider) {
     $routeProvider

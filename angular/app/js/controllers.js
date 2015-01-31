@@ -7,14 +7,14 @@
  * # MainCtrl
  * Controller of the App
  */
-angular.module('App')
-  .controller('MainCtrl', function ($scope) {
-    $scope.awesomeThings = [
-      'HTML5 Boilerplate',
-      'AngularJS',
-      'Karma'
-    ];
-  });
+var pytaskControllers = angular.module('pytaskControllers', []);
+pytaskControllers
+  .controller('MainCtrl', ['$scope', 'Task', function ($scope, Task) {
+    $scope.tasks = Task.query();
+    $scope.isActive = function(task) {
+        return task.status === 'ACTIVE';
+    };
+}]);
 
 
 /**
@@ -24,7 +24,7 @@ angular.module('App')
  * # AboutCtrl
  * Controller of the App
  */
-angular.module('App')
+pytaskControllers
   .controller('AboutCtrl', function ($scope) {
     $scope.awesomeThings = [
       'HTML5 Boilerplate',
