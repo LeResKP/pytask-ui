@@ -30,6 +30,10 @@ angular
         templateUrl: 'views/task.html',
         controller: 'taskCtrl'
       })
+      .when('/projects/:idproject', {
+        templateUrl: 'views/project.html',
+        controller: 'projectCtrl'
+      })
       .otherwise({
         redirectTo: '/'
       });

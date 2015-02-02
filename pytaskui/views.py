@@ -3,7 +3,7 @@ import pyramid.httpexceptions as exc
 from sqlalchemy.orm import class_mapper
 from sqlalchemy.exc import IntegrityError
 import transaction
-from pytask.models import DBSession, Task
+from pytask.models import DBSession, Task, Project
 import sys
 import inspect
 
@@ -36,11 +36,15 @@ class API(object):
         objs = self.sqla_model.query.all()
         return [sqla_obj_to_dict(o) for o in objs]
 
+    def _response(self, code, msg):
+        self.request.response.status_code = code
+        return dict(msg=msg)
+
     def get(self):
         ident = self.request.matchdict['ident']
         obj = self.sqla_model.query.get(ident)
         if not obj:
-            raise exc.HTTPNotFound('task doesn\'t exist: %i' % ident)
+            return self._response(404, 'task doesn\'t exist: %i' % ident)
         return sqla_obj_to_dict(obj)
 
     def update(self):
@@ -85,7 +89,7 @@ class API(object):
 class TaskAPI(API):
     sqla_model = Task
     route_prefix = 'tasks'
-    editable_fields = ['description']
+    editable_fields = ['description', 'idproject']
 
     def partial_active(self):
         idtask = int(self.request.matchdict['ident'])
@@ -97,6 +101,12 @@ class TaskAPI(API):
             raise exc.HTTPConflict('The task is already active')
         DBSession.add(task)
         return sqla_obj_to_dict(task)
+
+
+class ProjectAPI(API):
+    sqla_model = Project
+    route_prefix = 'projects'
+    editable_fields = ['name']
 
 
 def api_class_predicate(member):

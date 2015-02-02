@@ -3,6 +3,11 @@
 
 var ACTIVE_STATUS = 'ACTIVE';
 
+
+var httpErrorToString = function(httpResponse) {
+    return httpResponse.status + ' ' + httpResponse.statusText + ': ' + httpResponse.data.msg;
+}
+
 /**
  * @ngdoc function
  * @name App.controller:MainCtrl
@@ -12,8 +17,9 @@ var ACTIVE_STATUS = 'ACTIVE';
  */
 var pytaskControllers = angular.module('pytaskControllers', []);
 pytaskControllers
-  .controller('MainCtrl', ['$scope', 'Task', function ($scope, Task) {
+  .controller('MainCtrl', ['$scope', 'Task', 'Project', function ($scope, Task, Project) {
     $scope.tasks = Task.query();
+    $scope.projects = Project.query();
     $scope.isActive = function(task) {
         return task.status === ACTIVE_STATUS;
     };
@@ -40,7 +46,7 @@ pytaskControllers
  * Controller of the App
  */
 pytaskControllers
-  .controller('taskCtrl', ['$scope', '$routeParams', 'Task', function ($scope, $routeParams, Task) {
+  .controller('taskCtrl', ['$scope', '$routeParams', 'AlertService', 'Task', 'Project', function ($scope, $routeParams, AlertService, Task, Project) {
     var isNew = ($routeParams.idtask === 'new');
     if (!isNew) {
         $scope.task = Task.get({idtask: $routeParams.idtask});
@@ -48,13 +54,59 @@ pytaskControllers
     else {
         $scope.task = new Task();
     }
+
+    $scope.projects = Project.query();
+
     $scope.updateTask = function(task) {
         if ($scope.taskForm.$valid) {
             if (task.idtask) {
-                task.$update();
+                task.$update(function() {
+                    AlertService.set('success', 'Task updated!');
+                }, function(httpResponse) {
+                    console.log(httpResponse);
+                    var error = httpErrorToString(httpResponse);
+                    AlertService.set('danger', 'An error occured when updating task:' + error);
+                });
             }
             else {
-                task.$save();
+                task.$save(function() {
+                    AlertService.set('success', 'Task created!');
+                }, function(httpResponse) {
+                    var error = httpErrorToString(httpResponse);
+                    AlertService.set('danger', 'An error occured when creating task: ' + error);
+                });
+            }
+        }
+    };
+}]);
+
+
+pytaskControllers
+  .controller('projectCtrl', ['$scope', '$routeParams', 'AlertService', 'Project', function ($scope, $routeParams, AlertService, Project) {
+    var isNew = ($routeParams.idproject === 'new');
+    if (!isNew) {
+        $scope.project = Project.get({idproject: $routeParams.idproject});
+    }
+    else {
+        $scope.project = new Project();
+    }
+    $scope.updateProject = function(project) {
+        if ($scope.projectForm.$valid) {
+            if (project.idproject) {
+                project.$update(function() {
+                    AlertService.set('success', 'Projects updated!');
+                }, function(httpResponse) {
+                    var error = httpErrorToString(httpResponse);
+                    AlertService.set('danger', 'An error occured when updating project: ' + error);
+                });
+            }
+            else {
+                project.$save(function() {
+                    AlertService.set('success', 'Project created!');
+                }, function(httpResponse) {
+                    var error = httpErrorToString(httpResponse);
+                    AlertService.set('danger', 'An error occured when creating project: ' + error);
+                });
             }
         }
     };
