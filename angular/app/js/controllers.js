@@ -18,7 +18,7 @@ pytaskControllers
         return task.status === ACTIVE_STATUS;
     };
     $scope.setActive = function(task) {
-        task.$save({action: 'active'}, function(){
+        task.$patch({action: 'active'}, function(){
             // Remove the active task
             for(var i=0, len=$scope.tasks.length; i < len; i++) {
                 var t = $scope.tasks[i];
@@ -49,12 +49,12 @@ pytaskControllers
         $scope.task = new Task();
     }
     $scope.updateTask = function(task) {
-        if ($scope.task_form.$valid) {
+        if ($scope.taskForm.$valid) {
             if (task.idtask) {
-                task.$save();
+                task.$update();
             }
             else {
-                task.$save({action: 'new'});
+                task.$save();
             }
         }
     };

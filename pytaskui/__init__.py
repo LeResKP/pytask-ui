@@ -10,12 +10,9 @@ def main(global_config, **settings):
     config.include('pyramid_chameleon')
     config.add_static_view('/bower_components',
                            'angular_static/bower_components')
-    config.add_route('tasks', '/api/tasks.json')
-    config.add_route('task_new', '/api/tasks/new.json')
-    config.add_route('task', '/api/tasks/{idtask:\d+}.json')
-    config.add_route('tasks_action', '/api/tasks/{idtask:\d+}/{action}.json')
+
+    config.include('pytaskui.views', route_prefix='api')
     config.add_static_view('/', 'angular_static/app')
-    config.scan()
 
     # Since JSON render doesn't support datetime we create an adapter
     json_renderer = JSON()
