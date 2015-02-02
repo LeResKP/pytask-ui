@@ -1,23 +1,33 @@
-<a href="#/tasks/new" class="btn btn-default">Add task</a><br /><br />
 <div class="list-group">
-  <div class="list-group-item" ng-class="{'list-group-item-info': isActive(task)}" ng-repeat="task in tasks">
-    <b>Description</b>: {{task.description}}
-    <hr />
-    <div class="row">
-      <div class="col-md-4">
-        <b>Status</b>: {{task.status || '-'}}<br />
-        <b>Priority</b>: {{task.priority || '-'}}
+  <div class="list-group-item clearfix" ng-class="{'list-group-item-info': isActive(task)}" ng-repeat="task in tasks">
+    <div data-toggle="collapse" data-target="#collapse-{{$index}}" class="collapse-trigger collapsed">
+      <div class="row">
+      <div class="col-sm-1" style="padding-left: 40px;">
+        <span class="label label-default">{{task.status || 'open'}}</span>
       </div>
-      <div class="col-md-4">
-        <b>Projet</b>: {{task.idproject || '-'}}<br />
-        <b>Bug id</b>: {{task.bug_id || '-'}}
-      </div>
-      <div class="col-md-4">
-        <b>Creation date</b>:<br /> {{task.creation_date | date: 'medium'}}<br />
-        <b>Completed date</b>:<br /> {{task.completed_date || '-' | date : 'medium'}}
+      <div class="col-sm-11">
+      {{task.description}}
+      <button ng-click="setActive($event, task)" ng-disabled="disabledActive(task)" class="btn btn-default btn-xs pull-right">Active</button>
+      <button ng-click="toggleClose($event, task)" class="btn btn-default btn-xs pull-right">{{closeText(task)}}</button>
       </div>
     </div>
-    <button ng-click="setActive(task)" ng-disabled="isActive(task)" class="btn btn-default">Active this task</button>
-    <a href="#/tasks/{{task.idtask}}" class="btn btn-default">Edit</a>
+    <div id="collapse-{{$index}}" class="collapse">
+      <hr />
+      <div class="row">
+        <div class="col-md-4">
+          <b>Status</b>: {{task.status || '-'}}<br />
+          <b>Priority</b>: {{task.priority || '-'}}
+        </div>
+        <div class="col-md-4">
+          <b>Projet</b>: {{task.idproject || '-'}}<br />
+          <b>Bug id</b>: {{task.bug_id || '-'}}
+        </div>
+        <div class="col-md-4">
+          <b>Creation date</b>: {{task.creation_date | date: 'medium'}}<br />
+          <b>Completed date</b>: {{task.completed_date || '-' | date : 'medium'}}
+        </div>
+      </div>
+    </div>
+    </div>
   </div>
 </div>

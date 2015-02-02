@@ -1,0 +1,7 @@
+<a href="#/projects/new" class="btn btn-default">Add Project</a><br /><br />
+<div class="list-group">
+  <div class="list-group-item" ng-repeat="project in projects">
+    <b>Name</b>: {{project.name}}
+    <a href="#/projects/{{project.idproject}}" class="btn btn-default">Edit</a>
+  </div>
+</div>
