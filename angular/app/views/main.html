@@ -23,6 +23,7 @@
       </div>
       <div class="col-sm-11">
       {{task.description}}
+      {{task.time_ellapsed}}
       <button ng-click="toggleActive($event, task)" ng-disabled="disabledActive(task)" class="btn btn-default btn-xs pull-right">{{activeText(task)}}</button>
       <button ng-click="toggleClose($event, task)" class="btn btn-default btn-xs pull-right">{{closeText(task)}}</button>
       </div>
@@ -35,7 +36,7 @@
           <b>Priority</b>: {{task.priority || '-'}}
         </div>
         <div class="col-md-4">
-          <b>Projet</b>: {{task.idproject || '-'}}<br />
+          <b>Projet</b>: {{task.project}} {{task.idproject || '-'}}<br />
           <b>Bug id</b>: {{task.bug_id || '-'}}
         </div>
         <div class="col-md-4">

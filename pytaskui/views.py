@@ -13,11 +13,26 @@ def sqla_obj_to_dict(obj):
     """
     mapper = class_mapper(obj.__class__)
     dic = {}
+    extra = getattr(obj.__class__, 'JSON_EXPORT_PROPS', [])
     for prop in mapper._props.values():
         # For now, don't get the relation properties
         if getattr(prop, 'columns', None):
             v = getattr(obj, prop.key, None)
             dic[prop.key] = v
+
+    for e in extra:
+        if '.' in e:
+            prop1, prop2 = e.split('.')
+            attr = getattr(obj, prop1, None)
+            attr = getattr(attr, prop2, None)
+            e = prop1
+        else:
+            attr = getattr(obj, e, None)
+        if attr:
+            if inspect.ismethod(attr):
+                attr = attr()
+            dic[e] = attr
+
     return dic
 
 

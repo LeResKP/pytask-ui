@@ -19,7 +19,7 @@ var httpErrorToString = function(httpResponse) {
 var pytaskControllers = angular.module('pytaskControllers', []);
 
 pytaskControllers
-  .controller('MainCtrl', ['$scope', 'Task', 'Project', '$modal', function ($scope, Task, Project, $modal) {
+  .controller('MainCtrl', ['$scope', 'Task', 'Project', function ($scope, Task, Project) {
     $scope.tasks = Task.query();
     $scope.projects = Project.query();
     $scope.isActive = function(task) {
