@@ -16,7 +16,6 @@
     <div class="form-group">
       <label for="project">Project</label>
       <select ng-model="task.idproject">
-        <option>-</option>
         <option ng-repeat="project in projects" ng-value="project.idproject" ng-selected="project.idproject===task.idproject">{{project.name}}</option>
       </select>
     </div>

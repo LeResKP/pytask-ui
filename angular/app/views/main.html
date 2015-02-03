@@ -21,9 +21,14 @@
       <div class="col-sm-1" style="padding-left: 40px;">
         <span class="label label-default">{{task.status || 'open'}}</span>
       </div>
-      <div class="col-sm-11">
-      {{task.description}}
-      {{task.time_ellapsed}}
+      <div class="col-sm-8">
+        {{task.description}}
+      </div>
+      <div class="col-sm-1">
+        Spent {{task.time_ellapsed}}
+      </div>
+      <div class="col-sm-2">
+      <a ng-click="modalTask($event, task)" href="#" class="btn btn-default btn-xs pull-right">Edit</a>
       <button ng-click="toggleActive($event, task)" ng-disabled="disabledActive(task)" class="btn btn-default btn-xs pull-right">{{activeText(task)}}</button>
       <button ng-click="toggleClose($event, task)" class="btn btn-default btn-xs pull-right">{{closeText(task)}}</button>
       </div>
@@ -32,16 +37,12 @@
       <hr />
       <div class="row">
         <div class="col-md-4">
-          <b>Status</b>: {{task.status || '-'}}<br />
-          <b>Priority</b>: {{task.priority || '-'}}
-        </div>
-        <div class="col-md-4">
-          <b>Projet</b>: {{task.project}} {{task.idproject || '-'}}<br />
-          <b>Bug id</b>: {{task.bug_id || '-'}}
-        </div>
-        <div class="col-md-4">
           <b>Creation date</b>: {{task.creation_date | date: 'medium'}}<br />
           <b>Completed date</b>: {{task.completed_date || '-' | date : 'medium'}}
+        </div>
+        <div class="col-md-4">
+          <b>Projet</b>: {{task.project || '-'}}<br />
+          <b>Bug id</b>: {{task.bug_id || '-'}}
         </div>
       </div>
     </div>

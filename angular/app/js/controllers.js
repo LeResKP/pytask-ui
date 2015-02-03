@@ -19,7 +19,7 @@ var httpErrorToString = function(httpResponse) {
 var pytaskControllers = angular.module('pytaskControllers', []);
 
 pytaskControllers
-  .controller('MainCtrl', ['$scope', 'Task', 'Project', function ($scope, Task, Project) {
+  .controller('MainCtrl', ['$scope', '$modal', 'Task', 'Project', function ($scope, $modal, Task, Project) {
     $scope.tasks = Task.query();
     $scope.projects = Project.query();
     $scope.isActive = function(task) {
@@ -56,8 +56,24 @@ pytaskControllers
         task.$patch({action: 'toggle_close'});
     };
 
+    $scope.modalTask = function($event, task) {
+        console.log('edit', task);
+        $event.stopPropagation();
+        $modal.open({
+            templateUrl: 'views/modal-test.html',
+            controller: 'ModalInstanceCtrl',
+            resolve: {
+                task: function () {
+                   return task;
+               }
+            }
+        });
+    };
+
     $scope.$on('addTask', function (event, task) {
-        $scope.tasks.push(task);
+        if (typeof task.idtask === 'undefined') {
+            $scope.tasks.push(task);
+        }
     });
 
 }]);
@@ -66,12 +82,15 @@ pytaskControllers
 pytaskControllers
   .controller('navbarCtrl', ['$scope', 'Task', '$modal',
           function ($scope, Task, $modal) {
-            $scope.task = new Task();
-
             $scope.open = function() {
                 $modal.open({
                     templateUrl: 'views/modal-test.html',
                     controller: 'ModalInstanceCtrl',
+                    resolve: {
+                        task: function() {
+                            return new Task();
+                        }
+                    }
                 });
             };
         }
@@ -84,12 +103,18 @@ pytaskControllers
 }]);
 
 
-pytaskControllers.controller('ModalInstanceCtrl', ['$scope', '$modalInstance', '$rootScope', 'Task', function ($scope, $modalInstance, $rootScope, Task) {
+pytaskControllers.controller('ModalInstanceCtrl', ['$scope', '$modalInstance', '$rootScope', 'Task', 'Project', 'task', function ($scope, $modalInstance, $rootScope, Task, Project, task) {
 
-    $scope.task = new Task();
+    $scope.task = task;
+    $scope.projects = Project.query();
 
     $scope.ok = function () {
-        $scope.task.$save();
+        if (typeof $scope.task.idtask === 'undefined') {
+            $scope.task.$save();
+        }
+        else {
+            $scope.task.$update();
+        }
         $rootScope.$broadcast('addTask', $scope.task);
         $modalInstance.close();
     };
@@ -158,9 +183,6 @@ pytaskControllers
   .controller('projectCtrl', ['$scope', '$routeParams', 'AlertService', 'Project', function ($scope, $routeParams, AlertService, Project) {
     apiController($scope, $routeParams, AlertService, Project, 'idproject', 'project');
 }]);
-
-
-
 
 
 var app = angular
