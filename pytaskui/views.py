@@ -91,14 +91,21 @@ class TaskAPI(API):
     route_prefix = 'tasks'
     editable_fields = ['description', 'idproject']
 
-    def partial_active(self):
+    def index(self):
+        objs = self.sqla_model.query.all()
+        return [sqla_obj_to_dict(o) for o in objs]
+
+    def partial_toggle_active(self):
         idtask = int(self.request.matchdict['ident'])
         task = Task.query.get(idtask)
         if not task:
             raise exc.HTTPNotFound('task doesn\'t exist: %i' % idtask)
-        status = task.set_active()
-        if not status:
-            raise exc.HTTPConflict('The task is already active')
+        if task.status == 'ACTIVE':
+            status = task.set_inactive()
+        else:
+            status = task.set_active()
+        # if not status:
+        # if nraise exc.HTTPConflict('The task is already active')
         DBSession.add(task)
         return sqla_obj_to_dict(task)
 

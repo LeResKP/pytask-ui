@@ -26,11 +26,16 @@ pytaskControllers
         return task.status === ACTIVE_STATUS;
     };
     $scope.disabledActive = function(task) {
-        return (task.status === ACTIVE_STATUS || task.status === CLOSED_STATUS);
+        return (task.status === CLOSED_STATUS);
     };
-    $scope.setActive = function($event, task) {
+
+    $scope.activeText = function(task) {
+        return task.status === ACTIVE_STATUS? 'Stop': 'Start';
+    };
+
+    $scope.toggleActive = function($event, task) {
         $event.stopPropagation();
-        task.$patch({action: 'active'}, function(){
+        task.$patch({action: 'toggle_active'}, function(){
             // Remove the active task
             for(var i=0, len=$scope.tasks.length; i < len; i++) {
                 var t = $scope.tasks[i];
@@ -153,3 +158,36 @@ pytaskControllers
   .controller('projectCtrl', ['$scope', '$routeParams', 'AlertService', 'Project', function ($scope, $routeParams, AlertService, Project) {
     apiController($scope, $routeParams, AlertService, Project, 'idproject', 'project');
 }]);
+
+
+
+
+
+var app = angular
+  .module('pytaskFilter', []);
+app.filter('taskStatusFilter', function () {
+    return function (tasks, stat) {
+        if (stat === 'all') {
+            return tasks;
+        }
+
+        if (typeof stat === 'undefined' || stat === '') {
+            stat = 'open';
+        }
+
+        var filtered = [];
+        for (var i = 0; i < tasks.length; i++) {
+            var task = tasks[i];
+            // HACK: in waiting we add the model, set empty status to open
+            var s = task.status || 'open';
+            if(task.status === 'ACTIVE') {
+                // Active task is consider as open
+                s = 'open';
+            }
+            if (s === stat) {
+                filtered.push(task);
+            }
+        }
+        return filtered;
+    };
+});

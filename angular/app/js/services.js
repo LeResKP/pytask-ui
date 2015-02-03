@@ -22,6 +22,7 @@ pytaskServices.factory('Task', ['$resource',
 ]);
 
 
+
 pytaskServices.factory('Project', ['$resource',
     function($resource){
         return apiFactory('idproject', 'projects', $resource);

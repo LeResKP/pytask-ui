@@ -18,6 +18,7 @@ angular
     'ngSanitize',
     'ngTouch',
     'ui.bootstrap',
+    'pytaskFilter',
     'pytaskControllers',
     'pytaskServices'
   ])
